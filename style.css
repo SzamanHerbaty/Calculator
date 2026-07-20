@@ -69,3 +69,7 @@ body{
 .zero{
     flex-grow: 1;
 }
+
+.highlight{
+    background-color: #015667;
+}
