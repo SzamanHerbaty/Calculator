@@ -22,7 +22,8 @@ let state = {
     firstNumber: "",
     secondNumber: "",
     clearNeed: false,
-    currentOperator: ""
+    currentOperator: "",
+    calculated: false
 };
 
 function resetState(){
@@ -33,6 +34,7 @@ function resetState(){
     state.secondNumber = "";
     state.clearNeed = false;
     state.currentOperator = "";
+    state.calculated = false;
 
 }
 
@@ -86,6 +88,11 @@ function numberInput(item){
         state.clearNeed = false;
     }
 
+    if (state.calculated) {
+        state.firstNumber = ""; 
+        state.calculated = false;
+    }
+
     errorCheck();
 
     if(state.currentOperator === ""){
@@ -120,6 +127,10 @@ function numberInput(item){
 function operatorInput(item){
 
     errorCheck();
+
+    if (state.calculated) {
+        state.calculated = false;
+    }
 
     if(state.currentOperator !== "" && state.secondNumber === ""){
         state.currentOperator = item.textContent;
@@ -178,6 +189,8 @@ function equalsInput(){
         state.firstNumber = result;
         state.secondNumber = "";
         state.currentOperator = "";
+        state.calculated = true;
+
         addToDisplay(state.firstNumber);
         clearHighlight();
     }
