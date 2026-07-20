@@ -185,6 +185,21 @@ function clearAll(){
 }
 
 
+// NEGATE FUNCTION 
+
+function negate(){
+    if (state.firstNumber !== "" && state.currentOperator === ""){
+        state.firstNumber = -state.firstNumber;
+        addToDipslay(state.firstNumber);
+    }
+    else{
+        state.secondNumber = -state.secondNumber;
+        addToDipslay(state.secondNumber);
+    }
+
+    console.log(state);
+}
+
 
 // NUMBER EVENTS
 
@@ -217,3 +232,7 @@ clearBtn.addEventListener("click", clearAll);
 // EQUALS 
 
 equalsBtn.addEventListener("click", equalsInput);
+
+// NEGATE 
+
+negateBtn.addEventListener("click", negate);
