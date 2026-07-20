@@ -20,6 +20,11 @@ body{
     
 }
 
+#container{
+    display: flex;
+    
+}
+
 #calc{
     width: 340px;
     padding: 20px;
@@ -36,6 +41,7 @@ body{
     border: 2px solid #ade8f4;
     padding: 10px;
     text-align: right;
+    overflow: hidden;
 }
 
 .buttons{
@@ -72,4 +78,38 @@ body{
 
 .highlight{
     background-color: #015667;
+}
+
+.history{
+    border: 2px solid black;
+    padding: 10px 20px;
+    background-color: #023e8a;
+    color: white;
+    max-width: 250px;
+    max-height: 477.5px; 
+    overflow-y: auto;
+}
+
+.history p {
+    text-align: center;
+}
+
+.history_clear_btn{
+    border: none;
+    padding: 5px;
+    background-color: #0077b6;
+    margin-top: 10px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.history_clear_btn:hover{
+    background-color: #caf0f8;
+    color: black;
+    
+}
+
+.history_item{
+    background-color: #03045e;
+    padding: 5px 7px;
+    margin: 8px 0;
 }

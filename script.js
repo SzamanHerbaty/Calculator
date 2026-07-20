@@ -6,8 +6,8 @@ const delBtn = document.querySelector(".delete");
 const clearBtn = document.querySelector(".clear");
 const display = document.querySelector(".input");
 const dot = document.querySelector(".dot");
-
-console.log(dot.textContent)
+const history = document.querySelector(".history");
+const clearHistoryBtn = document.querySelector(".history_clear_btn");
 
 /*STATE OBJECT - jest odpowiedzialny za przetrzymywanie zmienny informujących o stanie w jakim jest kalkulator
                  Wartości tego obiektu zmieniają się wraz z różnymi opracjami
@@ -44,32 +44,36 @@ function errorCheck(){
 
 // MATH FUNCTIONS
 function operate(op, a, b){
+  let result = null;
+
   switch (op) {
     case "+":
-      return a + b;
+      result = a + b;
       break;
     case "-":
-      return a - b;
+      result = a - b;
       break;
     case "*":
-      return a * b;
+      result = a * b;
       break;
     case "/":
       if (b === 0) {
         return "! ERROR !";
       } else {
-        return a / b;
+        result = a / b;
       }
   }
-}
 
-function removeZeros(str){
-    return str.replace(/^0+(?!$)/, '');
-}
+  if (result !== undefined) {
+    result = parseFloat(result.toFixed(10));
 
+    return result.toString();
+  }
+
+}
 
 // CALCULATOR DIPSLAY FUNCTIONS
-function addToDipslay(value){
+function addToDisplay(value){
     display.textContent = value;
 }
 
@@ -85,17 +89,29 @@ function numberInput(item){
     errorCheck();
 
     if(state.currentOperator === ""){
-        state.firstNumber += item.textContent;
-       // state.firstNumber = removeZeros(state.firstNumber);
-        addToDipslay(state.firstNumber);
+        
+        if (state.firstNumber === "0") {
+            state.firstNumber = item.textContent; 
+        } 
+        else {
+            state.firstNumber += item.textContent;
+        }
+
+        addToDisplay(state.firstNumber);
     }
     else{
         if (state.firstNumber === ""){
             state.firstNumber = "0";
         }
-        state.secondNumber += item.textContent;
-       // state.secondNumber = removeZeros(state.secondNumber);
-        addToDipslay(state.secondNumber);
+        
+        if (state.secondNumber === "0") {
+            state.secondNumber = item.textContent;
+        } 
+        else {
+            state.secondNumber += item.textContent;
+        }
+        
+        addToDisplay(state.secondNumber);
     }
 
 }
@@ -110,9 +126,13 @@ function operatorInput(item){
     }
     
     if(state.currentOperator !== "" && state.secondNumber !== ""){
-        state.firstNumber = operate(state.currentOperator, parseFloat(state.firstNumber), parseFloat(state.secondNumber))
+        let result = operate(state.currentOperator, parseFloat(state.firstNumber), parseFloat(state.secondNumber));
+
+        addToHistory(result);
+
+        state.firstNumber = result;
         state.secondNumber = "";
-        addToDipslay(state.firstNumber);
+        addToDisplay(state.firstNumber);
     }
 
     state.currentOperator = item.textContent;
@@ -132,12 +152,12 @@ function dotInput(item){
         
         if (state.firstNumber === "") state.firstNumber = "0.";
         else if (!state.firstNumber.includes(".")) state.firstNumber += ".";
-        addToDipslay(state.firstNumber);
+        addToDisplay(state.firstNumber);
     }
     else{
         if (state.secondNumber === "") state.secondNumber = "0.";
         else if (!state.secondNumber.includes(".")) state.secondNumber += ".";
-        addToDipslay(state.secondNumber);
+        addToDisplay(state.secondNumber);
     }
       
     
@@ -150,10 +170,15 @@ function equalsInput(){
     errorCheck();
 
     if(state.firstNumber !== "" && state.secondNumber !== ""){
-        state.firstNumber = operate(state.currentOperator, parseFloat(state.firstNumber), parseFloat(state.secondNumber))
+
+        let result = operate(state.currentOperator, parseFloat(state.firstNumber), parseFloat(state.secondNumber));
+
+        addToHistory(result);
+
+        state.firstNumber = result;
         state.secondNumber = "";
         state.currentOperator = "";
-        addToDipslay(state.firstNumber);
+        addToDisplay(state.firstNumber);
         clearHighlight();
     }
 
@@ -188,18 +213,56 @@ function clearAll(){
 // NEGATE FUNCTION 
 
 function negate(){
-    if (state.firstNumber !== "" && state.currentOperator === ""){
-        state.firstNumber = -state.firstNumber;
-        addToDipslay(state.firstNumber);
+    if (state.currentOperator === ""){
+        state.firstNumber = (-state.firstNumber).toString();
+        addToDisplay(state.firstNumber);
     }
     else{
-        state.secondNumber = -state.secondNumber;
-        addToDipslay(state.secondNumber);
+        state.secondNumber = (-state.secondNumber).toString();
+        addToDisplay(state.secondNumber);
     }
 
-    console.log(state);
 }
 
+// DEL FUNCTION 
+
+function deletePrevious(){
+
+    if (state.currentOperator === ""){
+        state.firstNumber = state.firstNumber.toString().slice(0, -1);
+        addToDisplay(state.firstNumber || "0");
+    }
+    else{
+        state.secondNumber = state.secondNumber.toString().slice(0, -1);
+        addToDisplay(state.secondNumber || "0");
+    }
+}
+
+// ADD TO HISTORY FUNCTION
+
+function addToHistory(result){
+    let text = state.firstNumber + " "+ state.currentOperator + " " +state.secondNumber + " = " + result;
+
+    let historyItem = document.createElement("div");
+
+    historyItem.classList.add("history_item");
+
+    historyItem.textContent = text;
+
+    history.appendChild(historyItem);
+}
+
+// CLEAR HISTORY FUNCTION
+
+
+function clearHistory(){
+
+    console.log(history.querySelectorAll(".history_item"));
+    
+    history.querySelectorAll(".history_item").forEach(n => n.remove());
+    
+
+}
 
 // NUMBER EVENTS
 
@@ -236,3 +299,11 @@ equalsBtn.addEventListener("click", equalsInput);
 // NEGATE 
 
 negateBtn.addEventListener("click", negate);
+
+// DEL 
+
+delBtn.addEventListener("click", deletePrevious);
+
+// CLEAT HISTORY
+
+clearHistoryBtn.addEventListener("click", clearHistory);
